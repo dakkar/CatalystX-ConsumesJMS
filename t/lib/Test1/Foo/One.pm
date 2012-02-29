@@ -21,7 +21,7 @@ has messages => (
 sub consume_it {
     my ($self,$message,$headers) = @_;
 
-    push @{$self->messages},$message;
+    push @{$self->messages},[$headers,$message];
 
     return;
 }

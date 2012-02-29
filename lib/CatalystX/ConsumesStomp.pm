@@ -254,6 +254,8 @@ L</_generate_register_action_modifier>.
         push @result,$controller_pkg;
     }
 
+    $_->meta->make_immutable for @result;
+
     return @result;
 }
 
@@ -267,8 +269,8 @@ Generates a controller package, inheriting from
 L<Catalyst::Controller::ActionRole>, called
 C<${appname}::Controller::${destination_name}>.
 
-Inside this package, we set the C<action_namespace> attribute to
-return the destination name.
+Inside this package, we set the C<namespace> config slot to the
+destination name.
 
 =cut
 
@@ -289,11 +291,7 @@ sub _generate_controller_package {
                 superclasses => ['Catalyst::Controller::JMS'],
             )
         );
-        $meta->add_attribute(
-            '+action_namespace' => (
-                default => $destination_name,
-            )
-        );
+        $controller_pkg->config(namespace=>$destination_name);
     }
 
     return $controller_pkg;
@@ -325,7 +323,7 @@ sub _generate_register_action_modifier {
 
             my $coderef = $self->_wrap_code(
                 $c,
-                $route,
+                $route->{$type},
             );
             my $action = $self_controller->create_action(
                 name => $type,

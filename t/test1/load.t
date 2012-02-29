@@ -2,7 +2,6 @@
 use strict;
 use warnings;
 use Test::Most;
-use Data::Printer;
 use lib 't/lib';
 use ok 'Test1';
 
@@ -13,8 +12,8 @@ cmp_deeply($components,
                'Test1::Controller::input_queue' => all(
                    isa('Catalyst::Controller::JMS'),
                    methods(
-                       action_namespace => 'Test1',
-                       path_prefix => 'Test1',
+                       action_namespace => 'input_queue',
+                       path_prefix => 'input_queue',
                    ),
                ),
                'Test1::Foo::One' => ignore(),
