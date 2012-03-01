@@ -6,7 +6,7 @@ use Test::Plack::Handler::Stomp;
 use Net::Stomp::Frame;
 use Data::Printer;
 use lib 't/lib';
-use Test1;
+use Test2;
 
 my $t = Test::Plack::Handler::Stomp->new();
 $t->set_arg(
@@ -17,8 +17,8 @@ $t->set_arg(
 );
 $t->clear_frames_to_receive;
 
-my $app = Test1->psgi_app;
-my $consumer = Test1->component('Test1::Foo::One');
+my $app = Test2->psgi_app;
+my $consumer = Test2->component('Test2::Foo::One');
 
 subtest 'correct message' => sub {
     $t->queue_frame_to_receive(Net::Stomp::Frame->new({
@@ -74,48 +74,6 @@ subtest 'correct message' => sub {
     $t->clear_sent_frames;
 };
 
-# in the following two tests, we check that errors are *not* caught
-# specially. Error handling is provided by a role that
-# Test1::Base::Foo does not consume.
-#
-# actually, an application should never receive a message for a
-# destination it didn't subscribe to...
-
-subtest 'wrong destination' => sub {
-    $t->queue_frame_to_receive(Net::Stomp::Frame->new({
-        command => 'MESSAGE',
-        headers => {
-            destination => '/queue/input_queue_wrong',
-            subscription => 1,
-            'content-type' => 'json',
-            type => 'my_type',
-            'message-id' => 358,
-        },
-        body => '{"foo":"bar"}',
-    }));
-
-
-    my $e = exception { $t->handler->run($app) };
-    is($e,undef, 'consuming the message lives')
-        or note p $e;
-
-    cmp_deeply($t->frames_sent,
-               [
-                   all(
-                       isa('Net::Stomp::Frame'),
-                       methods(
-                           command=>'ACK',
-                           body=>undef,
-                           headers => {
-                               'message-id' => 358,
-                           },
-                       )
-                   ),
-               ],
-               'ack sent');
-    $t->clear_sent_frames;
-};
-
 subtest 'wrong type' => sub {
     $t->queue_frame_to_receive(Net::Stomp::Frame->new({
         command => 'MESSAGE',
@@ -139,6 +97,16 @@ subtest 'wrong type' => sub {
                    all(
                        isa('Net::Stomp::Frame'),
                        methods(
+                           command=>'SEND',
+                           body=>'{"default":"response"}',
+                           headers => {
+                               destination => '/remote-temp-queue/reply-address',
+                           },
+                       )
+                   ),
+                   all(
+                       isa('Net::Stomp::Frame'),
+                       methods(
                            command=>'ACK',
                            body=>undef,
                            headers => {
@@ -147,7 +115,7 @@ subtest 'wrong type' => sub {
                        )
                    ),
                ],
-               'ack sent');
+               'default response & ack sent');
     $t->clear_sent_frames;
 };
 
