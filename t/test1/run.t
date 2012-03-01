@@ -26,6 +26,7 @@ subtest 'correct message' => sub {
         headers => {
             destination => '/queue/input_queue',
             subscription => 0,
+            'content-type' => 'json',
             type => 'my_type',
             'message-id' => 356,
         },
@@ -79,6 +80,7 @@ subtest 'wrong destination' => sub {
         headers => {
             destination => '/queue/input_queue_wrong',
             subscription => 1,
+            'content-type' => 'json',
             type => 'my_type',
             'message-id' => 358,
         },
@@ -100,6 +102,7 @@ subtest 'wrong type' => sub {
         headers => {
             destination => '/queue/input_queue',
             subscription => 0,
+            'content-type' => 'json',
             type => 'their_type',
             'message-id' => 359,
         },
