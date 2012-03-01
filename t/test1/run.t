@@ -81,6 +81,10 @@ subtest 'correct message' => sub {
 # actually, an application should never receive a message for a
 # destination it didn't subscribe to...
 
+# silence the expected error messages if the user does not want to see
+# them
+Test1->log->disable('error') unless $ENV{TEST_VERBOSE};
+
 subtest 'wrong destination' => sub {
     $t->queue_frame_to_receive(Net::Stomp::Frame->new({
         command => 'MESSAGE',
