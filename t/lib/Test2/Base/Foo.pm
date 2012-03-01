@@ -1,7 +1,7 @@
-package Test1::Base::Foo;
+package Test2::Base::Foo;
 use Moose;
 extends 'Catalyst::Component';
-with 'CatalystX::ConsumesJMS';
+with 'CatalystX::ConsumesJMS::WithDefault';
 
 sub _kind_name { 'Foo' }
 
@@ -17,10 +17,21 @@ sub _wrap_code {
 
         $self->$code($message,$headers);
 
-        $c->stash->{message} = {no=>'thing'};
+        $c->stash->{message} ||= {no=>'thing'};
         $c->res->header('X-Reply-Address'=>'reply-address');
         return;
     }
+}
+
+sub _default_action {
+    my ($self,$appclass,$dest,$type,$route) = @_;
+
+    return sub {
+        my ($self_controller,$c) = @_;
+
+        $c->stash->{message} ||= {default=>'response'};
+        $c->res->header('X-Reply-Address'=>'reply-address');
+    };
 }
 
 1;

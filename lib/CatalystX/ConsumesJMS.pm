@@ -7,7 +7,7 @@ package CatalystX::ConsumesJMS;
 }
 use Moose::Role;
 
-# ABSTRACT: role for components providing Catalyst actions
+# ABSTRACT: role for components providing Catalyst actions consuming messages
 
 
 sub routes {
@@ -116,8 +116,8 @@ sub _generate_register_action_modifier {
         for my $type (keys %$route) {
 
             my $coderef = $self->_wrap_code(
-                $c,
-                $route->{$type},
+                $c,$destination_name,
+                $type,$route->{$type},
             );
             my $action = $self_controller->create_action(
                 name => $type,
@@ -144,7 +144,7 @@ __END__
 
 =head1 NAME
 
-CatalystX::ConsumesJMS - role for components providing Catalyst actions
+CatalystX::ConsumesJMS - role for components providing Catalyst actions consuming messages
 
 =head1 VERSION
 
@@ -158,7 +158,10 @@ version 0.0.1
   with 'CatalystX::ConsumesJMS';
 
   sub _kind_name {'Stuff'}
-  sub _wrap_code { return $_[2]->{code} }
+  sub _wrap_code {
+    my ($self,$c,$destination_name,$msg_type,$route) = @_;
+    return $route->{code}
+  }
 
 Then:
 
@@ -287,7 +290,7 @@ These names are mostly used to access the configuration.
 
 =head2 C<_wrap_code>
 
-This methods is called with:
+This method is called with:
 
 =over 4
 
@@ -297,13 +300,21 @@ the Catalyst application as passed to C<register_actions>
 
 =item *
 
-a value from the C<routes>, that includes the C<code> slot (see
-L</Routing> above)
+the destination name
+
+=item *
+
+the message type
+
+=item *
+
+the value from the C<routes> corresponding to the destination name and
+message type, that includes the C<code> slot (see L</Routing> above)
 
 =back
 
-The coderef returned will be invoked for each received message,
-passing:
+The coderef returned will be invoked as a Catalyst action for each
+received message, which means it will get:
 
 =over 4
 
@@ -315,15 +326,15 @@ the controller instance (you should rarely need this)
 
 the Catalyst application context
 
-=item *
-
-the de-serialized message
-
-=item *
-
-the request headers (a L<HTTP::Headers> object)
-
 =back
+
+It can get the de-serialized message by calling C<< $c->req->data >>,
+and the request headers (a L<HTTP::Headers> object) by calling C<<
+$c->req->headers >>.
+
+It can set the message to serialise in the response by setting C<<
+$c->stash->{message} >>, and the headers by calling C<<
+$c->res->header >>.
 
 =head1 Implementation Details
 
@@ -345,7 +356,7 @@ Catalyst code on the fly.
 If the component has a configuration entry C<enabled> with a false
 value, it is ignored, thus disabling it completely.
 
-We generate a controller package by calling
+We generate a controller package for each destination, by calling
 L</_generate_controller_package>, and we add an C<after> method
 modifier to the C<register_actions> method inherited from
 C<Catalyst::Controller>, to create the actions for each message

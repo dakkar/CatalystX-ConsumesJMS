@@ -9,7 +9,7 @@ use ExtUtils::MakeMaker 6.30;
 
 
 my %WriteMakefileArgs = (
-  "ABSTRACT" => "role for components providing Catalyst actions",
+  "ABSTRACT" => "role for components providing Catalyst actions consuming messages",
   "AUTHOR" => "Gianni Ceccarelli <gianni.ceccarelli\@net-a-porter.com>",
   "BUILD_REQUIRES" => {
     "Catalyst" => 0,
@@ -37,7 +37,7 @@ my %WriteMakefileArgs = (
   },
   "VERSION" => "0.0.1",
   "test" => {
-    "TESTS" => "t/*.t t/test1/*.t"
+    "TESTS" => "t/*.t t/test1/*.t t/test2/*.t"
   }
 );
 

@@ -1,5 +1,5 @@
 ---
-abstract: 'role for components providing Catalyst actions'
+abstract: 'role for components providing Catalyst actions consuming messages'
 author:
   - 'Gianni Ceccarelli <gianni.ceccarelli@net-a-porter.com>'
 build_requires:
