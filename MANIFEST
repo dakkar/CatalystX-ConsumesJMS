@@ -1,0 +1,17 @@
+Changes
+MANIFEST
+META.json
+META.yml
+Makefile.PL
+TODO
+dist.ini
+lib/CatalystX/ConsumesJMS.pm
+t/lib/Test1.pm
+t/lib/Test1/Base/Foo.pm
+t/lib/Test1/Foo/One.pm
+t/release-no-tabs.t
+t/release-pod-coverage.t
+t/release-pod-syntax.t
+t/test1/load.t
+t/test1/run.t
+weaver.ini
