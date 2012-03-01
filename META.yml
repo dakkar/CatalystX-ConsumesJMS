@@ -7,6 +7,7 @@ build_requires:
   Catalyst::Component: 0
   Data::Printer: 0
   Moose: 0
+  MooseX::MethodAttributes::Role: 0
   Net::Stomp::Frame: 0
   Test::Fatal: 0
   Test::More: 0
@@ -28,5 +29,7 @@ no_index:
   directory:
     - t/lib
 requires:
+  Class::Load: 0
   Moose::Role: 0
+  namespace::autoclean: 0
 version: 0.0.1

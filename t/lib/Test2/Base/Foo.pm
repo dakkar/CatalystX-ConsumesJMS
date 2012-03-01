@@ -1,7 +1,7 @@
 package Test2::Base::Foo;
 use Moose;
 extends 'Catalyst::Component';
-with 'CatalystX::ConsumesJMS::WithDefault';
+with 'CatalystX::ConsumesJMS';
 
 sub _kind_name { 'Foo' }
 
@@ -23,15 +23,6 @@ sub _wrap_code {
     }
 }
 
-sub _default_action {
-    my ($self,$appclass,$dest,$type,$route) = @_;
-
-    return sub {
-        my ($self_controller,$c) = @_;
-
-        $c->stash->{message} ||= {default=>'response'};
-        $c->res->header('X-Reply-Address'=>'reply-address');
-    };
-}
+sub _controller_roles { 'Test2::Role::DefaultAction' }
 
 1;
