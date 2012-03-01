@@ -1,7 +1,7 @@
 package Test1::Base::Foo;
 use Moose;
 extends 'Catalyst::Component';
-with 'CatalystX::ConsumesStomp';
+with 'CatalystX::ConsumesJMS';
 
 sub _kind_name { 'Foo' }
 
@@ -18,7 +18,7 @@ sub _wrap_code {
         $self->$code($message,$headers);
 
         $c->stash->{message} = {no=>'thing'};
-        $c->res->header('X-STOMP-Reply-Address'=>'reply-address');
+        $c->res->header('X-Reply-Address'=>'reply-address');
         return;
     }
 }

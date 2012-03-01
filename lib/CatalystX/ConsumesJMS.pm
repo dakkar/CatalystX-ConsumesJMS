@@ -1,4 +1,4 @@
-package CatalystX::ConsumesStomp;
+package CatalystX::ConsumesJMS;
 use Moose::Role;
 
 # ABSTRACT: role for components providing Catalyst actions
@@ -8,7 +8,7 @@ use Moose::Role;
   package MyApp::Base::Stuff;
   use Moose;
   extends 'Catalyst::Component';
-  with 'CatalystX::ConsumesStomp';
+  with 'CatalystX::ConsumesJMS';
 
   sub _kind_name {'Stuff'}
   sub _wrap_code { return $_[2]->{code} }
@@ -47,8 +47,8 @@ Also, remember to tell L<Catalyst> to load your C<Stuff> components:
 =head1 DESCRIPTION
 
 This role is to be used to define base classes for your Catalyst-based
-Stomp conusmer applications. It's I<not> to be consumed directly by
-application components.
+JMS / Stomp conusmer applications. It's I<not> to be consumed directly
+by application components.
 
 =head2 Routing
 
