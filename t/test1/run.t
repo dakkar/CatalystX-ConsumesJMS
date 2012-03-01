@@ -26,6 +26,7 @@ subtest 'correct message' => sub {
         headers => {
             destination => '/queue/input_queue',
             subscription => 0,
+            'content-type' => 'json',
             type => 'my_type',
             'message-id' => 356,
         },
@@ -73,12 +74,20 @@ subtest 'correct message' => sub {
     $t->clear_sent_frames;
 };
 
+# in the following two tests, we check that errors are *not* caught
+# specially. Error handling is provided by a role that
+# Test1::Base::Foo does not consume.
+#
+# actually, an application should never receive a message for a
+# destination it didn't subscribe to...
+
 subtest 'wrong destination' => sub {
     $t->queue_frame_to_receive(Net::Stomp::Frame->new({
         command => 'MESSAGE',
         headers => {
             destination => '/queue/input_queue_wrong',
             subscription => 1,
+            'content-type' => 'json',
             type => 'my_type',
             'message-id' => 358,
         },
@@ -90,7 +99,20 @@ subtest 'wrong destination' => sub {
     is($e,undef, 'consuming the message lives')
         or note p $e;
 
-    note p $t->frames_sent;
+    cmp_deeply($t->frames_sent,
+               [
+                   all(
+                       isa('Net::Stomp::Frame'),
+                       methods(
+                           command=>'ACK',
+                           body=>undef,
+                           headers => {
+                               'message-id' => 356,
+                           },
+                       )
+                   ),
+               ],
+               'ack sent');
     $t->clear_sent_frames;
 };
 
@@ -100,6 +122,7 @@ subtest 'wrong type' => sub {
         headers => {
             destination => '/queue/input_queue',
             subscription => 0,
+            'content-type' => 'json',
             type => 'their_type',
             'message-id' => 359,
         },
@@ -111,7 +134,20 @@ subtest 'wrong type' => sub {
     is($e,undef, 'consuming the message lives')
         or note p $e;
 
-    note p $t->frames_sent;
+    cmp_deeply($t->frames_sent,
+               [
+                   all(
+                       isa('Net::Stomp::Frame'),
+                       methods(
+                           command=>'ACK',
+                           body=>undef,
+                           headers => {
+                               'message-id' => 356,
+                           },
+                       )
+                   ),
+               ],
+               'ack sent');
     $t->clear_sent_frames;
 };
 
