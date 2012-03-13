@@ -71,9 +71,9 @@ base classes!). If you do, the results are undefined.
 It is possible to alter the destination name via configuration, like:
 
   <Stuff::One>
-   <routes>
+   <routes_map>
     my_input_destination the_actual_destination_name
-   </routes>
+   </routes_map>
   </Stuff::One>
 
 =head2 The "code"
@@ -111,6 +111,18 @@ You can do whatever you need in this coderef.
 sub routes {
     return {}
 }
+
+has routes_map => (
+    is => 'ro',
+    isa => 'HashRef',
+    default => sub { { } },
+);
+
+has enabled => (
+    is => 'ro',
+    isa => 'Bool',
+    default => 1,
+);
 
 =head1 Required methods
 
@@ -226,13 +238,11 @@ sub expand_modules {
 
     my $pre_routes = $class->routes;
 
-    if (defined $config->{enabled} && !$config->{enabled}) {
-        return;
-    }
+    return unless $self->enabled;
 
     my %routes;
     for my $destination_name (keys %$pre_routes) {
-        my $real_name = $config->{routes}{$destination_name}
+        my $real_name = $self->routes_map->{$destination_name}
             || $destination_name;
         my $route = $pre_routes->{$destination_name};
         @{$routes{$real_name}}{keys %$route} = values %$route;
@@ -294,6 +304,7 @@ destination name.
 sub _generate_controller_package {
     my ($self,$appname,$destination_name,$config,$route) = @_;
 
+    $destination_name =~ s{^/+}{};
     my $pkg_safe_destination_name = $destination_name;
     $pkg_safe_destination_name =~ s{\W+}{_}g;
 
@@ -363,6 +374,7 @@ Each action's code is obtained by calling L</_wrap_code>.
 sub _generate_register_action_modifier {
     my ($self,$appname,$destination_name,$controller_pkg,$config,$route) = @_;
 
+    $destination_name =~ s{^/+}{};
     return sub {
         my ($self_controller,$c) = @_;
 
