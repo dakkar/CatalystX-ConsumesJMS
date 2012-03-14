@@ -34,6 +34,7 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "CatalystX::ConsumesJMS",
   "PREREQ_PM" => {
+    "Catalyst::Controller::JMS" => 0,
     "Class::Load" => 0,
     "Moose::Role" => 0,
     "namespace::autoclean" => 0

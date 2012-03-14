@@ -29,6 +29,7 @@ no_index:
   directory:
     - t/lib
 requires:
+  Catalyst::Controller::JMS: 0
   Class::Load: 0
   Moose::Role: 0
   namespace::autoclean: 0
