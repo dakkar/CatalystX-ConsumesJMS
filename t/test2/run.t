@@ -17,7 +17,14 @@ $t->set_arg(
 );
 $t->clear_frames_to_receive;
 
-my $app = Test2->can('psgi_app') ? Test2->psgi_app : sub { Test2->run(@_) };
+my $app;
+if (Test2->can('psgi_app')) {
+    $app = Test2->psgi_app;
+}
+else {
+    Test2->setup_engine('PSGI');
+    $app = sub { Test2->run(@_) };
+}
 my $consumer = Test2->component('Test2::Foo::One');
 
 subtest 'correct message' => sub {

@@ -33,4 +33,4 @@ requires:
   Class::Load: 0
   Moose::Role: 0
   namespace::autoclean: 0
-version: 0.1_02
+version: 0.1_03

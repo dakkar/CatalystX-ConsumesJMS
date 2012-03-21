@@ -1,6 +1,6 @@
 package CatalystX::ConsumesJMS;
 {
-  $CatalystX::ConsumesJMS::VERSION = '0.1_02';
+  $CatalystX::ConsumesJMS::VERSION = '0.1_03';
 }
 {
   $CatalystX::ConsumesJMS::DIST = 'CatalystX-ConsumesJMS';
@@ -179,7 +179,7 @@ CatalystX::ConsumesJMS - role for components providing Catalyst actions consumin
 
 =head1 VERSION
 
-version 0.1_02
+version 0.1_03
 
 =head1 SYNOPSIS
 
