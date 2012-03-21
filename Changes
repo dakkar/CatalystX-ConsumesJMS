@@ -1,4 +1,5 @@
 {{$NEXT}}
+- make tests run on older Catalyst
 
 0.1_01    2012-03-14 12:20:43 Europe/London
 - Initial release
