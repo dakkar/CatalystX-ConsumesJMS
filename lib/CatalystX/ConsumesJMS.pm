@@ -1,6 +1,6 @@
 package CatalystX::ConsumesJMS;
 {
-  $CatalystX::ConsumesJMS::VERSION = '0.1_03';
+  $CatalystX::ConsumesJMS::VERSION = '0.1_04';
 }
 {
   $CatalystX::ConsumesJMS::DIST = 'CatalystX-ConsumesJMS';
@@ -179,7 +179,7 @@ CatalystX::ConsumesJMS - role for components providing Catalyst actions consumin
 
 =head1 VERSION
 
-version 0.1_03
+version 0.1_04
 
 =head1 SYNOPSIS
 
@@ -191,7 +191,13 @@ version 0.1_03
   sub _kind_name {'Stuff'}
   sub _wrap_code {
     my ($self,$c,$destination_name,$msg_type,$route) = @_;
-    return $route->{code}
+    my $code = $route->{code};
+    my $extra_config = $route->{extra_config};
+    return sub {
+      my ($controller,$ctx) = @_;
+      my $message = $ctx->req->data;
+      $self->$code($message);
+    }
   }
 
 Then:
@@ -214,7 +220,7 @@ Then:
   }
 
   sub my_consume_method {
-    my ($self,$message,$headers) = @_;
+    my ($self,$message) = @_;
 
     # do something
   }
@@ -222,13 +228,13 @@ Then:
 Also, remember to tell L<Catalyst> to load your C<Stuff> components:
 
   <setup_components>
-   search_extra ::Stuff
+   search_extra [ ::Stuff ]
   </setup_components>
 
 =head1 DESCRIPTION
 
 This role is to be used to define base classes for your Catalyst-based
-JMS / Stomp conusmer applications. It's I<not> to be consumed directly
+JMS / STOMP consumer applications. It's I<not> to be consumed directly
 by application components.
 
 =head2 Routing
@@ -254,11 +260,12 @@ It is possible to alter the destination name via configuration, like:
 
 =head2 The "code"
 
-The coderef paired to the C<code> key will be wrapped via the
-L</_wrap_code> function that the consuming class has to provide.
+The hashref specified by each destination / type pair will be passed
+to the L</_wrap_code> function (that the consuming class has to
+provide), and the coderef returned will be installed as the action to
+invoke when a message of that type is received from that destination.
 
-The coderef so wrapped will be invoked as a method on the subclass
-object, passing:
+The action, like all Catalyst actions, will be invoked passing:
 
 =over 4
 
@@ -270,19 +277,104 @@ the controller instance (you should rarely need this)
 
 the Catalyst application context
 
+=back
+
+You can do whatever you need in this coderef, but the synopsis gives a
+generally useful idea. You can find more examples of use at
+https://github.com/dakkar/CatalystX-StompSampleApps
+
+=head1 Required methods
+
+=head2 C<_kind_name>
+
+As in the synopsis, this should return a string that, in the names of
+the classes deriving from the consuming class, separates the
+"application name" from the "component name".
+
+These names are mostly used to access the configuration.
+
+=head2 C<_wrap_code>
+
+This method is called with:
+
+=over 4
+
 =item *
 
-the de-serialized message
+the Catalyst application as passed to C<register_actions>
 
 =item *
 
-the request headers (a L<HTTP::Headers> object)
+the destination name
+
+=item *
+
+the message type
+
+=item *
+
+the value from the C<routes> corresponding to the destination name and
+message type slot (see L</Routing> above)
 
 =back
 
-You can do whatever you need in this coderef.
+The coderef returned will be invoked as a Catalyst action for each
+received message, which means it will get:
 
-=head1 METHODS
+=over 4
+
+=item *
+
+the controller instance (you should rarely need this)
+
+=item *
+
+the Catalyst application context
+
+=back
+
+You can get the de-serialized message by calling C<< $c->req->data >>.
+The JMS headers will most probably be in C<< $c->req->env >> (or C<<
+$c->engine->env >> for older Catalyst), all keys namespaced by
+prefixing them with C<jms.>. So to get all JMS headers you could do:
+
+   my $psgi_env = $c->req->can('env')
+                  ? $c->req->env
+                  : $c->engine->env;
+   my %headers = map { s/^jms\.//r, $psgi_env->{$_} }
+                 grep { /^jms\./ } keys $psgi_env;
+
+You can set the message to serialise in the response by setting C<<
+$c->stash->{message} >>, and the headers by calling C<<
+$c->res->header >> (yes, incoming and outgoing data are handled
+asymmetrically. Sorry.)
+
+=head1 Implementation Details
+
+B<HERE BE DRAGONS>.
+
+This role should be consumed by sub-classes of C<Catalyst::Component>.
+
+The consuming class is supposed to be used as a base class for
+application components (see the L</SYNOPSIS>, and make sure to tell
+Catalyst to load them!).
+
+Since these components won't be in the normal Model/View/Controller
+namespaces, we need to modify the C<COMPONENT> method to pick up the
+correct configuration options. This is were L</_kind_name> is used.
+
+We hijack the C<expand_modules> method to generate various bits of
+Catalyst code on the fly.
+
+If the component has a configuration entry C<enabled> with a false
+value, it is ignored, thus disabling it completely.
+
+We generate a controller package for each destination, by calling
+L</_generate_controller_package>, and we add an C<after> method
+modifier to its C<register_actions> method inherited from
+C<Catalyst::Controller>, to create the actions for each message
+type. The modifier is generated by calling
+L</_generate_register_action_modifier>.
 
 =head2 C<_generate_controller_package>
 
@@ -323,91 +415,6 @@ with the Catalyst dispatcher. Each action will have the attribute
 C<MessageTarget>, see L<Catalyst::Controller::JMS>.
 
 Each action's code is obtained by calling L</_wrap_code>.
-
-=head1 Required methods
-
-=head2 C<_kind_name>
-
-As in the synopsis, this should return a string that, in the names of
-the classes deriving from the consuming class, separates the
-"application name" from the "component name".
-
-These names are mostly used to access the configuration.
-
-=head2 C<_wrap_code>
-
-This method is called with:
-
-=over 4
-
-=item *
-
-the Catalyst application as passed to C<register_actions>
-
-=item *
-
-the destination name
-
-=item *
-
-the message type
-
-=item *
-
-the value from the C<routes> corresponding to the destination name and
-message type, that includes the C<code> slot (see L</Routing> above)
-
-=back
-
-The coderef returned will be invoked as a Catalyst action for each
-received message, which means it will get:
-
-=over 4
-
-=item *
-
-the controller instance (you should rarely need this)
-
-=item *
-
-the Catalyst application context
-
-=back
-
-It can get the de-serialized message by calling C<< $c->req->data >>,
-and the request headers (a L<HTTP::Headers> object) by calling C<<
-$c->req->headers >>.
-
-It can set the message to serialise in the response by setting C<<
-$c->stash->{message} >>, and the headers by calling C<<
-$c->res->header >>.
-
-=head1 Implementation Details
-
-B<HERE BE DRAGONS>.
-
-This role should be consumed by sub-classes of C<Catalyst::Component>.
-
-The consuming class is supposed to be used as a base class for
-application components (see the L</SYNOPSIS>, and make sure to tell
-Catalyst to load them!).
-
-Since these components won't be in the normal Model/View/Controller
-namespaces, we need to modify the C<COMPONENT> method to pick up the
-correct configuration options.
-
-We hijack the C<expand_modules> method to generate various bits of
-Catalyst code on the fly.
-
-If the component has a configuration entry C<enabled> with a false
-value, it is ignored, thus disabling it completely.
-
-We generate a controller package for each destination, by calling
-L</_generate_controller_package>, and we add an C<after> method
-modifier to the C<register_actions> method inherited from
-C<Catalyst::Controller>, to create the actions for each message
-type. The modifier is generated by calling
-L</_generate_register_action_modifier>.
 
 =begin Pod::Coverage
 
