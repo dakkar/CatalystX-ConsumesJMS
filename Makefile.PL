@@ -14,6 +14,7 @@ my %WriteMakefileArgs = (
   "BUILD_REQUIRES" => {
     "Catalyst" => 0,
     "Catalyst::Component" => 0,
+    "Catalyst::Controller::JMS" => 0,
     "Data::Printer" => 0,
     "Moose" => 0,
     "MooseX::MethodAttributes::Role" => 0,
