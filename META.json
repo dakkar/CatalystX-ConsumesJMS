@@ -1,0 +1,57 @@
+{
+   "abstract" : "role for components providing Catalyst actions consuming messages",
+   "author" : [
+      "Gianni Ceccarelli <gianni.ceccarelli@net-a-porter.com>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 4.300010, CPAN::Meta::Converter version 2.120630",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "CatalystX-ConsumesJMS",
+   "no_index" : {
+      "directory" : [
+         "t/lib"
+      ]
+   },
+   "prereqs" : {
+      "configure" : {
+         "requires" : {
+            "ExtUtils::MakeMaker" : "6.30"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "Catalyst::Controller::JMS" : "0",
+            "Class::Load" : "0",
+            "Moose::Role" : "0",
+            "namespace::autoclean" : "0"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Catalyst" : "0",
+            "Catalyst::Component" : "0",
+            "Catalyst::Controller::JMS" : "0",
+            "Data::Printer" : "0",
+            "Moose" : "0",
+            "MooseX::MethodAttributes::Role" : "0",
+            "Net::Stomp::Frame" : "0",
+            "Test::Fatal" : "0",
+            "Test::More" : "0",
+            "Test::Most" : "0",
+            "Test::Plack::Handler::Stomp" : "0",
+            "ok" : "0",
+            "strict" : "0",
+            "warnings" : "0"
+         }
+      }
+   },
+   "release_status" : "testing",
+   "version" : "0.1_05"
+}
+
