@@ -1,7 +1,5 @@
 {{$NEXT}}
-
-0.1_05    2012-03-30 13:33:08 Europe/London
-- shameless bump to get this re-tested
+- first non-dev release
 
 0.1_04    2012-03-22 16:42:35 Europe/London
 - better deps
