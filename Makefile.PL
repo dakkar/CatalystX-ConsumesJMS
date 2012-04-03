@@ -40,7 +40,7 @@ my %WriteMakefileArgs = (
     "Moose::Role" => 0,
     "namespace::autoclean" => 0
   },
-  "VERSION" => "0.1_04",
+  "VERSION" => "1.0",
   "test" => {
     "TESTS" => "t/*.t t/test1/*.t t/test2/*.t"
   }
