@@ -294,7 +294,7 @@ L</_generate_register_action_modifier>.
         push @result,$controller_pkg;
     }
 
-    $_->meta->make_immutable for @result;
+    #$_->meta->make_immutable for @result;
 
     return @result;
 }
