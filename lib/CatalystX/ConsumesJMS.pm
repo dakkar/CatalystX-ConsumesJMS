@@ -2,6 +2,7 @@ package CatalystX::ConsumesJMS;
 use Moose::Role;
 use namespace::autoclean;
 use Class::Load ();
+use Catalyst::Utils ();
 
 # ABSTRACT: role for components providing Catalyst actions consuming messages
 
@@ -228,9 +229,10 @@ around COMPONENT => sub {
 
     my ($appname,$basename) = $class->_split_class_name($class);
     my $kind_name = $class->_kind_name;
-    $config = $appclass->config->{"${kind_name}::${basename}"} || {};
+    my $ext_config = $appclass->config->{"${kind_name}::${basename}"} || {};
+    my $merged_config = Catalyst::Utils::merge_hashes($ext_config,$config);
 
-    return $class->$orig($appclass,$config);
+    return $class->$orig($appclass,$merged_config);
 };
 
 =pod
