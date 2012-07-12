@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+1.01      2012-07-12 12:11:34 Europe/London
 - don't clobber passed-in configuration in COMPONENT
 
 1.0       2012-04-03 12:41:18 Europe/London
