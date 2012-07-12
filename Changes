@@ -1,4 +1,5 @@
 {{$NEXT}}
+- don't clobber passed-in configuration in COMPONENT
 
 1.0       2012-04-03 12:41:18 Europe/London
 - first non-dev release
