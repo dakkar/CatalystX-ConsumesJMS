@@ -83,6 +83,18 @@ It is possible to alter the destination name via configuration, like:
    </routes_map>
   </Stuff::One>
 
+You can also do this:
+
+  <Stuff::One>
+   <routes_map>
+    my_input_destination the_actual_destination_name
+    my_input_destination another_destination_name
+   </routes_map>
+  </Stuff::One>
+
+to get the consumer to consume from two different destinations without
+altering the code.
+
 =head2 The "code"
 
 The hashref specified by each destination / type pair will be passed
@@ -261,7 +273,13 @@ sub expand_modules {
         my $real_name = $self->routes_map->{$destination_name}
             || $destination_name;
         my $route = $pre_routes->{$destination_name};
-        @{$routes{$real_name}}{keys %$route} = values %$route;
+        if (ref($real_name) eq 'ARRAY') {
+            @{$routes{$_}}{keys %$route} = values %$route
+                for @$real_name;
+        }
+        else {
+            @{$routes{$real_name}}{keys %$route} = values %$route;
+        }
     }
 
     my @result;
