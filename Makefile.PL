@@ -20,7 +20,6 @@ my %WriteMakefileArgs = (
     "MooseX::MethodAttributes::Role" => 0,
     "Net::Stomp::Frame" => 0,
     "Test::Fatal" => 0,
-    "Test::More" => 0,
     "Test::Most" => 0,
     "Test::Plack::Handler::Stomp" => 0,
     "ok" => 0,
@@ -41,7 +40,7 @@ my %WriteMakefileArgs = (
     "Moose::Role" => 0,
     "namespace::autoclean" => 0
   },
-  "VERSION" => "1.01",
+  "VERSION" => "1.02",
   "test" => {
     "TESTS" => "t/*.t t/test1/*.t t/test2/*.t"
   }

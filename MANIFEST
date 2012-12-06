@@ -13,9 +13,11 @@ t/lib/Test2.pm
 t/lib/Test2/Base/Foo.pm
 t/lib/Test2/Foo/One.pm
 t/lib/Test2/Role/DefaultAction.pm
+t/lib/test1.conf
 t/release-no-tabs.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
+t/test1/conf.t
 t/test1/load.t
 t/test1/run.t
 t/test2/load.t

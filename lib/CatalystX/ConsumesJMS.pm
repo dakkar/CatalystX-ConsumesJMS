@@ -1,6 +1,6 @@
 package CatalystX::ConsumesJMS;
 {
-  $CatalystX::ConsumesJMS::VERSION = '1.01';
+  $CatalystX::ConsumesJMS::VERSION = '1.02';
 }
 {
   $CatalystX::ConsumesJMS::DIST = 'CatalystX-ConsumesJMS';
@@ -72,7 +72,13 @@ sub expand_modules {
         my $real_name = $self->routes_map->{$destination_name}
             || $destination_name;
         my $route = $pre_routes->{$destination_name};
-        @{$routes{$real_name}}{keys %$route} = values %$route;
+        if (ref($real_name) eq 'ARRAY') {
+            @{$routes{$_}}{keys %$route} = values %$route
+                for @$real_name;
+        }
+        else {
+            @{$routes{$real_name}}{keys %$route} = values %$route;
+        }
     }
 
     my @result;
@@ -176,6 +182,7 @@ sub _generate_register_action_modifier {
 1;
 
 __END__
+
 =pod
 
 =encoding utf-8
@@ -186,7 +193,7 @@ CatalystX::ConsumesJMS - role for components providing Catalyst actions consumin
 
 =head1 VERSION
 
-version 1.01
+version 1.02
 
 =head1 SYNOPSIS
 
@@ -264,6 +271,18 @@ It is possible to alter the destination name via configuration, like:
     my_input_destination the_actual_destination_name
    </routes_map>
   </Stuff::One>
+
+You can also do this:
+
+  <Stuff::One>
+   <routes_map>
+    my_input_destination the_actual_destination_name
+    my_input_destination another_destination_name
+   </routes_map>
+  </Stuff::One>
+
+to get the consumer to consume from two different destinations without
+altering the code.
 
 =head2 The "code"
 
@@ -443,4 +462,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

@@ -1,5 +1,5 @@
 package Test1;
-use Catalyst $ENV{TEST_VERBOSE} ? qw(-Debug) : ();
+use Catalyst 'ConfigLoader',$ENV{TEST_VERBOSE} ? qw(-Debug) : ();
 
 __PACKAGE__->config({
     setup_components => {
