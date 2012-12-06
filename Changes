@@ -1,4 +1,6 @@
 {{$NEXT}}
+- allow multiple real destinations for the same logical destination in
+  routes_map
 
 1.01      2012-07-12 12:11:34 Europe/London
 - don't clobber passed-in configuration in COMPONENT
