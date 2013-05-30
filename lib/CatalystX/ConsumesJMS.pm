@@ -123,7 +123,7 @@ https://github.com/dakkar/CatalystX-StompSampleApps
 =cut
 
 sub routes {
-    return {}
+    die "the 'routes' method needs to be implemented in class $_[0]\n"
 }
 
 has routes_map => (
