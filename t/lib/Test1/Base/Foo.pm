@@ -12,10 +12,10 @@ sub _wrap_code {
     return sub {
         my ($controller,$c) = @_;
 
-        my $data = $c->req->data;
+        my $body = join '',$c->req->body->getlines;
         my $headers = $c->req->headers;
 
-        $self->$code($data,$headers);
+        $self->$code($body,$headers);
 
         $c->res->body('nothing');
         return;
