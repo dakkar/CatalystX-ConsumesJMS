@@ -433,7 +433,7 @@ C</_generate_register_action_modifier>. For example you could return:
 
 to set that attribute for all generated actions. Defaults to:
 
-  attributes => { 'Path' => [$action_name] }
+  attributes => { 'Path' => ["$url/$action_name"] }
 
 to make all the action "local" to the generated controller (i.e. they
 will be invoked for requests to C<< $url/$action_name >>).
@@ -441,8 +441,8 @@ will be invoked for requests to C<< $url/$action_name >>).
 =cut
 
 sub _action_extra_params {
-    my ($c,$url,$action_name,$route) = @_;
-    return ( attributes => { 'Path' => [$action_name] } );
+    my ($self,$c,$url,$action_name,$route) = @_;
+    return ( attributes => { 'Path' => ["$url/$action_name"] } );
 }
 
 =begin Pod::Coverage
