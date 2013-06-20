@@ -4,7 +4,7 @@
       "Gianni Ceccarelli <gianni.ceccarelli@net-a-porter.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300028, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.131560",
    "license" : [
       "perl_5"
    ],
@@ -42,6 +42,7 @@
       },
       "test" : {
          "requires" : {
+            "Catalist::Plugin::ConfigLoader" : "0",
             "Catalyst" : "0",
             "Catalyst::Component" : "0",
             "Catalyst::Controller::JMS" : "0",
@@ -52,6 +53,7 @@
             "Test::Fatal" : "0",
             "Test::Most" : "0",
             "Test::Plack::Handler::Stomp" : "0",
+            "lib" : "0",
             "ok" : "0",
             "strict" : "0",
             "warnings" : "0"
@@ -59,6 +61,6 @@
       }
    },
    "release_status" : "stable",
-   "version" : "1.02"
+   "version" : "1.03"
 }
 

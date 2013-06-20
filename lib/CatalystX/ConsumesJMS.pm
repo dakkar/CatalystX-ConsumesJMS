@@ -1,6 +1,6 @@
 package CatalystX::ConsumesJMS;
 {
-  $CatalystX::ConsumesJMS::VERSION = '1.02';
+  $CatalystX::ConsumesJMS::VERSION = '1.03';
 }
 {
   $CatalystX::ConsumesJMS::DIST = 'CatalystX-ConsumesJMS';
@@ -14,7 +14,7 @@ use Catalyst::Utils ();
 
 
 sub routes {
-    return {}
+    die "the 'routes' method needs to be implemented in class $_[0]\n"
 }
 
 has routes_map => (
@@ -193,7 +193,7 @@ CatalystX::ConsumesJMS - role for components providing Catalyst actions consumin
 
 =head1 VERSION
 
-version 1.02
+version 1.03
 
 =head1 SYNOPSIS
 

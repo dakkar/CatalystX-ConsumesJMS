@@ -11,21 +11,7 @@ use ExtUtils::MakeMaker 6.30;
 my %WriteMakefileArgs = (
   "ABSTRACT" => "role for components providing Catalyst actions consuming messages",
   "AUTHOR" => "Gianni Ceccarelli <gianni.ceccarelli\@net-a-porter.com>",
-  "BUILD_REQUIRES" => {
-    "Catalyst" => 0,
-    "Catalyst::Component" => 0,
-    "Catalyst::Controller::JMS" => 0,
-    "Data::Printer" => 0,
-    "Moose" => 0,
-    "MooseX::MethodAttributes::Role" => 0,
-    "Net::Stomp::Frame" => 0,
-    "Test::Fatal" => 0,
-    "Test::Most" => 0,
-    "Test::Plack::Handler::Stomp" => 0,
-    "ok" => 0,
-    "strict" => 0,
-    "warnings" => 0
-  },
+  "BUILD_REQUIRES" => {},
   "CONFIGURE_REQUIRES" => {
     "ExtUtils::MakeMaker" => "6.30"
   },
@@ -40,12 +26,42 @@ my %WriteMakefileArgs = (
     "Moose::Role" => 0,
     "namespace::autoclean" => 0
   },
-  "VERSION" => "1.02",
+  "TEST_REQUIRES" => {
+    "Catalist::Plugin::ConfigLoader" => 0,
+    "Catalyst" => 0,
+    "Catalyst::Component" => 0,
+    "Catalyst::Controller::JMS" => 0,
+    "Data::Printer" => 0,
+    "Moose" => 0,
+    "MooseX::MethodAttributes::Role" => 0,
+    "Net::Stomp::Frame" => 0,
+    "Test::Fatal" => 0,
+    "Test::Most" => 0,
+    "Test::Plack::Handler::Stomp" => 0,
+    "lib" => 0,
+    "ok" => 0,
+    "strict" => 0,
+    "warnings" => 0
+  },
+  "VERSION" => "1.03",
   "test" => {
     "TESTS" => "t/*.t t/test1/*.t t/test2/*.t"
   }
 );
 
+
+unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
+  my $tr = delete $WriteMakefileArgs{TEST_REQUIRES};
+  my $br = $WriteMakefileArgs{BUILD_REQUIRES};
+  for my $mod ( keys %$tr ) {
+    if ( exists $br->{$mod} ) {
+      $br->{$mod} = $tr->{$mod} if $tr->{$mod} > $br->{$mod};
+    }
+    else {
+      $br->{$mod} = $tr->{$mod};
+    }
+  }
+}
 
 unless ( eval { ExtUtils::MakeMaker->VERSION(6.56) } ) {
   my $br = delete $WriteMakefileArgs{BUILD_REQUIRES};

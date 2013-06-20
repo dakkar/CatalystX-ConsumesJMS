@@ -6,6 +6,7 @@ Makefile.PL
 TODO
 dist.ini
 lib/CatalystX/ConsumesJMS.pm
+t/bad-subclass.t
 t/lib/Test1.pm
 t/lib/Test1/Base/Foo.pm
 t/lib/Test1/Foo/One.pm

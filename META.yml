@@ -3,6 +3,7 @@ abstract: 'role for components providing Catalyst actions consuming messages'
 author:
   - 'Gianni Ceccarelli <gianni.ceccarelli@net-a-porter.com>'
 build_requires:
+  Catalist::Plugin::ConfigLoader: 0
   Catalyst: 0
   Catalyst::Component: 0
   Catalyst::Controller::JMS: 0
@@ -13,13 +14,14 @@ build_requires:
   Test::Fatal: 0
   Test::Most: 0
   Test::Plack::Handler::Stomp: 0
+  lib: 0
   ok: 0
   strict: 0
   warnings: 0
 configure_requires:
   ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300028, CPAN::Meta::Converter version 2.120921'
+generated_by: 'Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.131560'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -34,4 +36,4 @@ requires:
   Class::Load: 0
   Moose::Role: 0
   namespace::autoclean: 0
-version: 1.02
+version: 1.03
