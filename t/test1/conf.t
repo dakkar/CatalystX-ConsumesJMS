@@ -18,13 +18,14 @@ my @destinations =
     Test1->controllers;
 
 my $foo_one = Test1->component('Test1::Foo::One');
+my $foo_two = Test1->component('Test1::Foo::Two');
 
 sub run_test {
-    my ($url) = @_;
+    my ($foo,$url,$action) = @_;
 
-    $foo_one->calls([]);
+    $foo->calls([]);
 
-    my $res = request POST "$url/my_action",
+    my $res = request POST "$url/$action",
         'My-Header' => 'my value',
         'Content-type' => 'text/plain',
         'Content-length' => 6,
@@ -33,7 +34,7 @@ sub run_test {
     ok($res->is_success, 'the request works')
         or note p $res;
 
-    cmp_deeply($foo_one->calls,
+    cmp_deeply($foo->calls,
                [
                    [
                        all(isa('HTTP::Headers'),
@@ -43,15 +44,22 @@ sub run_test {
                    ],
                ],
                'request received and action run')
-        or note p $foo_one->calls;
+        or note p $foo->calls;
 }
 
 subtest 'request on a configured destination' => sub {
-    run_test('/url/1');
+    run_test($foo_one,'/url/1','my_action');
 };
 
 subtest 'request on the other configured destination' => sub {
-    run_test('/url/2');
+    run_test($foo_one,'/url/2','my_action');
+};
+
+subtest 'requests on configured destination & actions' => sub {
+    run_test($foo_two,'/url2/1','action1');
+    run_test($foo_two,'/url2/1','action2');
+    run_test($foo_two,'/url2/2','action3');
+    run_test($foo_two,'/url2/2','action4');
 };
 
 done_testing();

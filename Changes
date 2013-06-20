@@ -1,2 +1,4 @@
 {{$NEXT}}
 - extracted from CatalystX::ConsumesJMS
+- extended route mapping flexibility, you can now map actions in
+  addition to URLs

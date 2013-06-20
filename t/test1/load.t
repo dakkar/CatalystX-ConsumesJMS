@@ -16,7 +16,15 @@ cmp_deeply($components,
                        path_prefix => 'base_url',
                    ),
                ),
+               'Test1::Controller::base_url2' => all(
+                   isa('Catalyst::Controller'),
+                   methods(
+                       action_namespace => 'base_url2',
+                       path_prefix => 'base_url2',
+                   ),
+               ),
                'Test1::Foo::One' => ignore(),
+               'Test1::Foo::Two' => ignore(),
            },
            'components loaded'
 );
