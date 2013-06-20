@@ -39,7 +39,7 @@ else {
 my $consumer = Test1->component('Test1::Foo::One');
 
 sub run_test {
-    my ($dest) = @_;
+    my ($dest,$type) = @_;
 
     my $code = time();
 
@@ -50,10 +50,10 @@ sub run_test {
         headers => {
             destination => $dest,
             'content-type' => 'json',
-            type => 'my_type',
+            type => $type,
             'message-id' => $code,
         },
-        body => qq{{"foo":"$dest"}},
+        body => qq{{"foo":"$dest","bar":"$type"}},
     }));
 
     my $e = exception { $t->handler->run($app) };
@@ -64,7 +64,7 @@ sub run_test {
                [
                    [
                        isa('HTTP::Headers'),
-                       { foo => $dest },
+                       { foo => $dest, bar => $type },
                    ],
                ],
                'message consumed & logged')
@@ -98,11 +98,12 @@ sub run_test {
 }
 
 subtest 'message on a configured destination' => sub {
-    run_test('/queue/input1');
+    run_test('/queue/input1','my_type');
 };
 
 subtest 'message on the other configured destination' => sub {
-    run_test('/queue/input2');
+    run_test('/queue/input2','type1');
+    run_test('/queue/input2','type2');
 };
 
 done_testing();
