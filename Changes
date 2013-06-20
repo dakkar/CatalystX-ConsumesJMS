@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+1.03      2013-06-20 17:01:47 Europe/London
 - die if a subclass does not implement "routes"
 - fix dependencies
 
