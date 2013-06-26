@@ -3,10 +3,10 @@ abstract: 'role for components providing Catalyst actions consuming messages'
 author:
   - 'Gianni Ceccarelli <gianni.ceccarelli@net-a-porter.com>'
 build_requires:
-  Catalist::Plugin::ConfigLoader: 0
   Catalyst: 0
   Catalyst::Component: 0
   Catalyst::Controller::JMS: 0
+  Catalyst::Plugin::ConfigLoader: 0
   Config::General: 0
   Data::Printer: 0
   Moose: 0
@@ -37,4 +37,4 @@ requires:
   Class::Load: 0
   Moose::Role: 0
   namespace::autoclean: 0
-version: 1.03
+version: 1.04

@@ -42,10 +42,10 @@
       },
       "test" : {
          "requires" : {
-            "Catalist::Plugin::ConfigLoader" : "0",
             "Catalyst" : "0",
             "Catalyst::Component" : "0",
             "Catalyst::Controller::JMS" : "0",
+            "Catalyst::Plugin::ConfigLoader" : "0",
             "Config::General" : "0",
             "Data::Printer" : "0",
             "Moose" : "0",
@@ -62,6 +62,6 @@
       }
    },
    "release_status" : "stable",
-   "version" : "1.03"
+   "version" : "1.04"
 }
 

@@ -27,10 +27,10 @@ my %WriteMakefileArgs = (
     "namespace::autoclean" => 0
   },
   "TEST_REQUIRES" => {
-    "Catalist::Plugin::ConfigLoader" => 0,
     "Catalyst" => 0,
     "Catalyst::Component" => 0,
     "Catalyst::Controller::JMS" => 0,
+    "Catalyst::Plugin::ConfigLoader" => 0,
     "Config::General" => 0,
     "Data::Printer" => 0,
     "Moose" => 0,
@@ -44,7 +44,7 @@ my %WriteMakefileArgs = (
     "strict" => 0,
     "warnings" => 0
   },
-  "VERSION" => "1.03",
+  "VERSION" => "1.04",
   "test" => {
     "TESTS" => "t/*.t t/test1/*.t t/test2/*.t"
   }
