@@ -1,4 +1,4 @@
-package CatalystX::ControllerBuilder;
+package CatalystX::RouteMaster;
 use Moose::Role;
 use namespace::autoclean;
 use Class::Load ();
@@ -11,7 +11,7 @@ use Catalyst::Utils ();
   package MyApp::Base::Stuff;
   use Moose;
   extends 'Catalyst::Component';
-  with 'CatalystX::ControllerBuilder';
+  with 'CatalystX::RouteMaster';
 
   sub _kind_name {'Stuff'}
   sub _wrap_code {

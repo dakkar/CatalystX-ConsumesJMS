@@ -1,7 +1,7 @@
 package Test1::Base::Foo;
 use Moose;
 extends 'Catalyst::Component';
-with 'CatalystX::ControllerBuilder';
+with 'CatalystX::RouteMaster';
 
 sub _kind_name { 'Foo' }
 
