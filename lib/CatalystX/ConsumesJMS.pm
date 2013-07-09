@@ -1,7 +1,7 @@
 package CatalystX::ConsumesJMS;
 use Moose::Role;
 use namespace::autoclean;
-with 'CatalystX::ControllerBuilder';
+with 'CatalystX::RouteMaster';
 use Catalyst::Utils ();
 
 # ABSTRACT: role for components providing Catalyst actions consuming messages
