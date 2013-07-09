@@ -3,6 +3,7 @@ use Moose::Role;
 use namespace::autoclean;
 use Class::Load ();
 use Catalyst::Utils ();
+use Moose::Util qw(apply_all_roles);
 
 # ABSTRACT: role for components providing Catalyst actions
 
@@ -149,7 +150,8 @@ generally useful idea.
 =cut
 
 sub routes {
-    die "the 'routes' method needs to be implemented in class $_[0]\n"
+    die "the 'routes' method needs to be implemented in class ".
+        (ref($_[0])||$_[0])."\n"
 }
 
 has routes_map => (
@@ -274,7 +276,7 @@ sub expand_modules {
 
     my ($appname,$basename) = $class->_split_class_name($class);
 
-    my $pre_routes = $class->routes;
+    my $pre_routes = $self->routes;
 
     return unless $self->enabled;
 
@@ -283,21 +285,26 @@ sub expand_modules {
         my $real_url = $self->routes_map->{$url}
             || $url;
         my $route = $pre_routes->{$url};
+        # one URL mapped to multiple URLs
         if (ref($real_url) eq 'ARRAY') {
             @{$routes{$_}}{keys %$route} = values %$route
                 for @$real_url;
         }
+        # one URL mapped to multiple URLs, and action names mapped
+        # inside
         elsif (ref($real_url) eq 'HASH') {
             for my $real_url_key (keys %$real_url) {
                 my $action_map = $real_url->{$real_url_key};
                 for my $action_name (keys %$route) {
                     my $real_action_name = $action_map->{$action_name}
                         || $action_name;
+                    # action name mapped to multiple names
                     if (ref($real_action_name) eq 'ARRAY') {
                         $routes{$real_url_key}->{$_} =
                             $route->{$action_name}
                                 for @$real_action_name;
                     }
+                    # action name mapped to a single name
                     else {
                         $routes{$real_url_key}->{$real_action_name} =
                             $route->{$action_name};
@@ -305,6 +312,7 @@ sub expand_modules {
                 }
             }
         }
+        # one URL mapped to a single URL
         else {
             @{$routes{$real_url}}{keys %$route} = values %$route;
         }
@@ -386,11 +394,7 @@ sub _generate_controller_package {
                 superclasses => \@superclasses,
             )
         );
-        for my $role (@roles) {
-            my $metarole = Moose::Meta::Role->initialize($role);
-            next unless $metarole;
-            $metarole->apply($meta);
-        }
+        apply_all_roles($controller_pkg,@roles) if @roles;
         $controller_pkg->config(namespace=>$url);
     }
 
