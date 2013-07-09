@@ -58,15 +58,37 @@ Also, remember to tell L<Catalyst> to load your C<Stuff> components:
 
 =head1 DESCRIPTION
 
-This role is to be used to define base classes for your Catalyst
-applications. It's I<not> to be consumed directly by application
-components. Classes inheriting from those base classes will, when
-loaded, create controllers and register their actions inside them.
+First of all, this role does not give you anything that you could not
+do with Catalyst directly. It does not add any functionality. What it
+does is allow you to write some simple controllers in a different
+style.
+
+This was originally part of L<CatalystX::ConsumesJMS>, then I realised
+it could easily be generalised, so here is the "general" part.
+
+=head2 Rationale
+
+So, since this module is quite complicated, and does not actually
+provide anything that Catalyst doesn't already do, why does it exist?
+When I wrote L<CatalystX::ConsumesJMS> and L<Plack::Handler::Stomp>, I
+was (ab)using Catalyst as a combination dependency injection container
++ dispatcher, to write an application to consume ActiveMQ
+messages. One of the design goals was to hide Catalyst from the actual
+application code, since in the end there was no need to expose the
+framework. If you don't need to hide Catalyst from your code, or you
+need non-trivial dispatching, you're probably better off without this
+module.
+
+This role is to be used to define base classes for components in your
+Catalyst applications. It's I<not> to be consumed directly by
+application components. Classes inheriting from those base classes
+will, when loaded, create controllers and register their actions
+inside them.
 
 =head2 Routing
 
 Subclasses of your component base specify which URLs they are
-interested in, by writing a C<routes> sub, see the synopsis for an
+interested in, by writing a C<routes> method, see the synopsis for an
 example.
 
 They can specify as many URLs and action names as they want / need,
@@ -74,7 +96,9 @@ and they can re-use the C<code> values as many times as needed.
 
 The main limitation is that you can't have two components using the
 exact same URL / action name pair (even if they derive from different
-base classes!). If you do, the results are undefined.
+base classes!). If you do, the results are undefined. This is the same
+"limitation" as not having two actions for the same request in regular
+Catalyst.
 
 It is possible to alter the URL via configuration, like:
 
@@ -123,29 +147,15 @@ That would (with the default L</_action_extra_params> method) install
 
 =back
 
+(Again, nothing that you couldn't do with normally-written
+controllers, it's just a different way to do it).
+
 =head2 The "code"
 
 The hashref specified by each URL / action name pair will be passed to
 the L</_wrap_code> function (that the consuming class has to provide),
 and the coderef returned will be installed as the action to invoke for
 that name under that URL.
-
-The action, like all Catalyst actions, will be invoked passing:
-
-=over 4
-
-=item *
-
-the controller instance (you should rarely need this)
-
-=item *
-
-the Catalyst application context
-
-=back
-
-You can do whatever you need in this coderef, but the synopsis gives a
-generally useful idea.
 
 =cut
 
@@ -192,11 +202,11 @@ the Catalyst application as passed to C<register_actions>
 
 =item *
 
-the URL (mapped via L</routes_map>)
+the URL (mapped via L</routing>)
 
 =item *
 
-the action name (mapped via L</routes_map>)
+the action name (mapped via L</routing>)
 
 =item *
 
@@ -219,6 +229,9 @@ the controller instance (you should rarely need this)
 the Catalyst application context
 
 =back
+
+You can do whatever you need in this method, see the synopsis for an
+idea.
 
 =cut
 
@@ -363,8 +376,9 @@ L</_generate_register_action_modifier>.
 
 Generates a controller package, inheriting from whatever
 L</_controller_base_classes> returns, called
-C<${appname}::Controller::${url}>. Any roles returned by
-L</_controller_roles> are applied to the controller.
+C<${appname}::Controller::${url}> (invalid characters are replaced
+with C<_>). Any roles returned by L</_controller_roles> are applied to
+the controller.
 
 Inside the controller, we set the C<namespace> config slot to the
 C<$url>.
@@ -493,6 +507,10 @@ sub _action_extra_params {
     my ($self,$c,$url,$action_name,$route) = @_;
     return ( attributes => { 'Path' => ["$url/$action_name"] } );
 }
+
+=head1 AUTHORS
+
+Thanks to Peter Sergeant (SARGIE) for the name.
 
 =begin Pod::Coverage
 
