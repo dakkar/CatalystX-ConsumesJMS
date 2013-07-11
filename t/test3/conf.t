@@ -7,8 +7,8 @@ use Net::Stomp::Frame;
 use Data::Printer;
 use lib 't/lib';
 
-$ENV{CATALYST_CONFIG} = 't/lib/test1.conf';
-require Test1;
+$ENV{CATALYST_CONFIG} = 't/lib/test3.conf';
+require Test3;
 
 # let's get the destinations from the controllers, to make sure they
 # got created properly, 2 controllers for a single Foo, because of the
@@ -16,8 +16,8 @@ require Test1;
 my @destinations =
     map { '/'.$_ }
     grep { m{^(queue|topic)}x }
-    map { Test1->controller($_)->action_namespace }
-    Test1->controllers;
+    map { Test3->controller($_)->action_namespace }
+    Test3->controllers;
 
 my $t = Test::Plack::Handler::Stomp->new();
 $t->set_arg(
@@ -29,14 +29,14 @@ $t->clear_frames_to_receive;
 $t->clear_sent_frames;
 
 my $app;
-if (Test1->can('psgi_app')) {
-    $app = Test1->psgi_app;
+if (Test3->can('psgi_app')) {
+    $app = Test3->psgi_app;
 }
 else {
-    Test1->setup_engine('PSGI');
-    $app = sub { Test1->run(@_) };
+    Test3->setup_engine('PSGI');
+    $app = sub { Test3->run(@_) };
 }
-my $consumer = Test1->component('Test1::Foo::One');
+my $consumer = Test3->component('Test3::Foo::One');
 
 sub run_test {
     my ($dest,$type) = @_;

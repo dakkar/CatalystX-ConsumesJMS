@@ -6,7 +6,7 @@ use Test::Plack::Handler::Stomp;
 use Net::Stomp::Frame;
 use Data::Printer;
 use lib 't/lib';
-use Test1;
+use Test3;
 
 my $t = Test::Plack::Handler::Stomp->new();
 $t->set_arg(
@@ -18,14 +18,14 @@ $t->set_arg(
 $t->clear_frames_to_receive;
 
 my $app;
-if (Test1->can('psgi_app')) {
-    $app = Test1->psgi_app;
+if (Test3->can('psgi_app')) {
+    $app = Test3->psgi_app;
 }
 else {
-    Test1->setup_engine('PSGI');
-    $app = sub { Test1->run(@_) };
+    Test3->setup_engine('PSGI');
+    $app = sub { Test3->run(@_) };
 }
-my $consumer = Test1->component('Test1::Foo::One');
+my $consumer = Test3->component('Test3::Foo::One');
 
 subtest 'correct message' => sub {
     $t->queue_frame_to_receive(Net::Stomp::Frame->new({
@@ -83,14 +83,14 @@ subtest 'correct message' => sub {
 
 # in the following two tests, we check that errors are *not* caught
 # specially. Error handling is provided by a role that
-# Test1::Base::Foo does not consume.
+# Test3::Base::Foo does not consume.
 #
 # actually, an application should never receive a message for a
 # destination it didn't subscribe to...
 
 # silence the expected error messages if the user does not want to see
 # them
-Test1->log->disable('error') unless $ENV{TEST_VERBOSE};
+Test3->log->disable('error') unless $ENV{TEST_VERBOSE};
 
 subtest 'wrong destination' => sub {
     $t->queue_frame_to_receive(Net::Stomp::Frame->new({

@@ -1,4 +1,4 @@
-package Test1::Base::Foo;
+package Test4::Base::Foo;
 use Moose;
 extends 'Catalyst::Component';
 with 'CatalystX::ConsumesJMS';
@@ -17,10 +17,12 @@ sub _wrap_code {
 
         $self->$code($message,$headers);
 
-        $c->stash->{message} = {no=>'thing'};
+        $c->stash->{message} ||= {no=>'thing'};
         $c->res->header('X-Reply-Address'=>'reply-address');
         return;
     }
 }
+
+sub _controller_roles { 'Test4::Role::DefaultAction' }
 
 1;

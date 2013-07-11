@@ -1,4 +1,4 @@
-package Test2::Role::DefaultAction;
+package Test4::Role::DefaultAction;
 use MooseX::MethodAttributes::Role;
 use namespace::autoclean;
 

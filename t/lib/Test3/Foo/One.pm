@@ -1,6 +1,6 @@
-package Test2::Foo::One;
+package Test3::Foo::One;
 use Moose;
-extends 'Test2::Base::Foo';
+extends 'Test3::Base::Foo';
 
 sub routes {
     return {

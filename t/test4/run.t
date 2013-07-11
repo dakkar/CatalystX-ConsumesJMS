@@ -6,7 +6,7 @@ use Test::Plack::Handler::Stomp;
 use Net::Stomp::Frame;
 use Data::Printer;
 use lib 't/lib';
-use Test2;
+use Test4;
 
 my $t = Test::Plack::Handler::Stomp->new();
 $t->set_arg(
@@ -18,14 +18,14 @@ $t->set_arg(
 $t->clear_frames_to_receive;
 
 my $app;
-if (Test2->can('psgi_app')) {
-    $app = Test2->psgi_app;
+if (Test4->can('psgi_app')) {
+    $app = Test4->psgi_app;
 }
 else {
-    Test2->setup_engine('PSGI');
-    $app = sub { Test2->run(@_) };
+    Test4->setup_engine('PSGI');
+    $app = sub { Test4->run(@_) };
 }
-my $consumer = Test2->component('Test2::Foo::One');
+my $consumer = Test4->component('Test4::Foo::One');
 
 subtest 'correct message' => sub {
     $t->queue_frame_to_receive(Net::Stomp::Frame->new({
