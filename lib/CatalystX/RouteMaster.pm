@@ -492,7 +492,7 @@ sub _generate_register_action_modifier {
 
 You can override this method to provide additional arguments for the
 C<create_action> call inside
-C</_generate_register_action_modifier>. For example you could return:
+L</_generate_register_action_modifier>. For example you could return:
 
   attributes => { MySpecialAttr => [ 'foo' ] }
 
