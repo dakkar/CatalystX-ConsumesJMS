@@ -1,24 +1,23 @@
 package Test1::Base::Foo;
 use Moose;
 extends 'Catalyst::Component';
-with 'CatalystX::ConsumesJMS';
+with 'CatalystX::RouteMaster';
 
 sub _kind_name { 'Foo' }
 
 sub _wrap_code {
-    my ($self,$appclass,$dest,$type,$route) = @_;
+    my ($self,$appclass,$url,$action,$route) = @_;
     my $code = $route->{code};
 
     return sub {
         my ($controller,$c) = @_;
 
-        my $message = $c->req->data;
+        my $body = join '',$c->req->body->getlines;
         my $headers = $c->req->headers;
 
-        $self->$code($message,$headers);
+        $self->$code($body,$headers);
 
-        $c->stash->{message} = {no=>'thing'};
-        $c->res->header('X-Reply-Address'=>'reply-address');
+        $c->res->body('nothing');
         return;
     }
 }

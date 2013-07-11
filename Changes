@@ -1,3 +1,8 @@
+1.05      2013-07-11 12:19:17 Europe/London
+- extracted CatalystX::RouteMaster
+- extended route mapping flexibility, you can now map actions /
+  message types in addition to URLs / destinations
+
 1.04      2013-06-26 11:44:40 Europe/London
 - fix typo in dependencies
 
@@ -26,4 +31,3 @@
 
 0.1_01    2012-03-14 12:20:43 Europe/London
 - Initial release
-

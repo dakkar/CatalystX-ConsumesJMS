@@ -5,8 +5,8 @@ use namespace::autoclean;
 sub default :Default {
     my ($self_controller,$c) = @_;
 
-    $c->stash->{message} ||= {default=>'response'};
-    $c->res->header('X-Reply-Address'=>'reply-address');
+    $c->res->body('default action');
+    $c->res->code(404);
 }
 
 1;

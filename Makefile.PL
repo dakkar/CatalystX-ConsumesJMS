@@ -24,15 +24,19 @@ my %WriteMakefileArgs = (
     "Catalyst::Utils" => 0,
     "Class::Load" => 0,
     "Moose::Role" => 0,
+    "Moose::Util" => 0,
     "namespace::autoclean" => 0
   },
   "TEST_REQUIRES" => {
     "Catalyst" => 0,
     "Catalyst::Component" => 0,
+    "Catalyst::Controller" => 0,
     "Catalyst::Controller::JMS" => 0,
     "Catalyst::Plugin::ConfigLoader" => 0,
+    "Catalyst::Test" => 0,
     "Config::General" => 0,
     "Data::Printer" => 0,
+    "HTTP::Request::Common" => 0,
     "Moose" => 0,
     "MooseX::MethodAttributes::Role" => 0,
     "Net::Stomp::Frame" => 0,
@@ -44,9 +48,9 @@ my %WriteMakefileArgs = (
     "strict" => 0,
     "warnings" => 0
   },
-  "VERSION" => "1.04",
+  "VERSION" => "1.05",
   "test" => {
-    "TESTS" => "t/*.t t/test1/*.t t/test2/*.t"
+    "TESTS" => "t/*.t t/test1/*.t t/test2/*.t t/test3/*.t t/test4/*.t"
   }
 );
 

@@ -1,183 +1,26 @@
 package CatalystX::ConsumesJMS;
 {
-  $CatalystX::ConsumesJMS::VERSION = '1.04';
+  $CatalystX::ConsumesJMS::VERSION = '1.05';
 }
 {
   $CatalystX::ConsumesJMS::DIST = 'CatalystX-ConsumesJMS';
 }
 use Moose::Role;
 use namespace::autoclean;
-use Class::Load ();
+with 'CatalystX::RouteMaster';
 use Catalyst::Utils ();
 
 # ABSTRACT: role for components providing Catalyst actions consuming messages
 
 
-sub routes {
-    die "the 'routes' method needs to be implemented in class $_[0]\n"
-}
-
-has routes_map => (
-    is => 'ro',
-    isa => 'HashRef',
-    default => sub { { } },
-);
-
-has enabled => (
-    is => 'ro',
-    isa => 'Bool',
-    default => 1,
-);
-
-
-requires '_kind_name';
-
-
-requires '_wrap_code';
-
-
-sub _split_class_name {
-    my ($self,$class_name) = @_;
-    my $kind_name = $self->_kind_name;
-
-    my ($appname,$basename) = ($class_name =~ m{^((?:\w|:)+)::\Q$kind_name\E::(.*)$});
-    return ($appname,$basename);
-}
-
-around COMPONENT => sub {
-    my ($orig,$class,$appclass,$config) = @_;
-
-    my ($appname,$basename) = $class->_split_class_name($class);
-    my $kind_name = $class->_kind_name;
-    my $ext_config = $appclass->config->{"${kind_name}::${basename}"} || {};
-    my $merged_config = Catalyst::Utils::merge_hashes($ext_config,$config);
-
-    return $class->$orig($appclass,$merged_config);
-};
-
-
-sub expand_modules {
-    my ($self,$component,$config) = @_;
-
-    my $class=ref($self);
-
-    my ($appname,$basename) = $class->_split_class_name($class);
-
-    my $pre_routes = $class->routes;
-
-    return unless $self->enabled;
-
-    my %routes;
-    for my $destination_name (keys %$pre_routes) {
-        my $real_name = $self->routes_map->{$destination_name}
-            || $destination_name;
-        my $route = $pre_routes->{$destination_name};
-        if (ref($real_name) eq 'ARRAY') {
-            @{$routes{$_}}{keys %$route} = values %$route
-                for @$real_name;
-        }
-        else {
-            @{$routes{$real_name}}{keys %$route} = values %$route;
-        }
-    }
-
-    my @result;
-
-    for my $destination_name (keys %routes) {
-        my $route = $routes{$destination_name};
-
-
-        my $controller_pkg = $self->_generate_controller_package(
-            $appname,$destination_name,$config,$route,
-        );
-
-        $controller_pkg->meta->add_after_method_modifier(
-            'register_actions' =>
-                $self->_generate_register_action_modifier(
-                    $appname,$destination_name,
-                    $controller_pkg,
-                    $config,$route,
-                ),
-        );
-
-        push @result,$controller_pkg;
-    }
-
-    #$_->meta->make_immutable for @result;
-
-    return @result;
-}
-
-
-sub _generate_controller_package {
-    my ($self,$appname,$destination_name,$config,$route) = @_;
-
-    $destination_name =~ s{^/+}{};
-    my $pkg_safe_destination_name = $destination_name;
-    $pkg_safe_destination_name =~ s{\W+}{_}g;
-
-    my $controller_pkg = "${appname}::Controller::${pkg_safe_destination_name}";
-
-    our $VERSION; # get the global, set by Dist::Zilla
-
-    if (!Class::Load::is_class_loaded($controller_pkg)) {
-
-        my @superclasses = $self->_controller_base_classes;
-        my @roles = $self->_controller_roles;
-        Class::Load::load_class($_) for @superclasses,@roles;
-
-        my $meta = Moose::Meta::Class->create(
-            $controller_pkg => (
-                version => $VERSION,
-                superclasses => \@superclasses,
-            )
-        );
-        for my $role (@roles) {
-            my $metarole = Moose::Meta::Role->initialize($role);
-            next unless $metarole;
-            $metarole->apply($meta);
-        }
-        $controller_pkg->config(namespace=>$destination_name);
-    }
-
-    return $controller_pkg;
-}
-
 
 sub _controller_base_classes { 'Catalyst::Controller::JMS' }
 
 
-sub _controller_roles { }
-
-
-sub _generate_register_action_modifier {
-    my ($self,$appname,$destination_name,$controller_pkg,$config,$route) = @_;
-
-    $destination_name =~ s{^/+}{};
-    return sub {
-        my ($self_controller,$c) = @_;
-
-        for my $type (keys %$route) {
-
-            my $coderef = $self->_wrap_code(
-                $c,$destination_name,
-                $type,$route->{$type},
-            );
-            my $action = $self_controller->create_action(
-                name => $type,
-                code => $coderef,
-                reverse => "$destination_name/$type",
-                namespace => $destination_name,
-                class => $controller_pkg,
-                attributes => {
-                    MessageTarget => [$type],
-                },
-            );
-            $c->dispatcher->register($c,$action);
-        }
-    }
+sub _action_extra_params {
+    my ($self,$c,$destination,$type,$route) = @_;
+    return attributes => { MessageTarget => [$type] };
 }
-
 
 1;
 
@@ -193,16 +36,16 @@ CatalystX::ConsumesJMS - role for components providing Catalyst actions consumin
 
 =head1 VERSION
 
-version 1.04
+version 1.05
 
 =head1 SYNOPSIS
 
-  package MyApp::Base::Stuff;
+  package MyApp::Base::MyConsumer;
   use Moose;
   extends 'Catalyst::Component';
   with 'CatalystX::ConsumesJMS';
 
-  sub _kind_name {'Stuff'}
+  sub _kind_name {'MyConsumer'}
   sub _wrap_code {
     my ($self,$c,$destination_name,$msg_type,$route) = @_;
     my $code = $route->{code};
@@ -216,9 +59,9 @@ version 1.04
 
 Then:
 
-  package MyApp::Stuff::One;
+  package MyApp::MyConsumer::One;
   use Moose;
-  extends 'MyApp::Base::Stuff';
+  extends 'MyApp::Base::MyConsumer';
 
   sub routes {
     return {
@@ -239,17 +82,19 @@ Then:
     # do something
   }
 
-Also, remember to tell L<Catalyst> to load your C<Stuff> components:
+Also, remember to tell L<Catalyst> to load your C<MyConsumer> components:
 
   <setup_components>
-   search_extra [ ::Stuff ]
+   search_extra [ ::MyConsumer ]
   </setup_components>
 
 =head1 DESCRIPTION
 
 This role is to be used to define base classes for your Catalyst-based
 JMS / STOMP consumer applications. It's I<not> to be consumed directly
-by application components.
+by application components. See L<CatalystX::RouteMaster> for
+implementation details and a rationale. Most of the rest of this
+document is copied from there.
 
 =head2 Routing
 
@@ -266,23 +111,50 @@ base classes!). If you do, the results are undefined.
 
 It is possible to alter the destination name via configuration, like:
 
-  <Stuff::One>
+  <MyConsumer::One>
    <routes_map>
     my_input_destination the_actual_destination_name
    </routes_map>
-  </Stuff::One>
+  </MyConsumer::One>
 
 You can also do this:
 
-  <Stuff::One>
+  <MyConsumer::One>
    <routes_map>
     my_input_destination the_actual_destination_name
     my_input_destination another_destination_name
    </routes_map>
-  </Stuff::One>
+  </MyConsumer::One>
 
 to get the consumer to consume from two different destinations without
 altering the code.
+
+You can even alter the message type via the configuration:
+
+  <MyConsumer::One>
+   <routes_map>
+    <my_input_destination the_actual_destination_name>
+      my_message_type actual_type_1
+    </my_input_destination>
+    <my_input_destination another_destination_name>
+      my_message_type actual_type_2
+      my_message_type actual_type_3
+    </my_input_destination>
+   </routes_map>
+  </Stuff::One>
+
+That would install 3 identical actions for the following destination /
+message type pairs:
+
+=over 4
+
+=item C<actual_type_1> on C<the_actual_destination_name>
+
+=item C<actual_type_2> on C<another_destination_name>
+
+=item C<actual_type_3> on C<another_destination_name>
+
+=back
 
 =head2 The "code"
 
@@ -290,24 +162,6 @@ The hashref specified by each destination / type pair will be passed
 to the L</_wrap_code> function (that the consuming class has to
 provide), and the coderef returned will be installed as the action to
 invoke when a message of that type is received from that destination.
-
-The action, like all Catalyst actions, will be invoked passing:
-
-=over 4
-
-=item *
-
-the controller instance (you should rarely need this)
-
-=item *
-
-the Catalyst application context
-
-=back
-
-You can do whatever you need in this coderef, but the synopsis gives a
-generally useful idea. You can find more examples of use at
-https://github.com/dakkar/CatalystX-StompSampleApps
 
 =head1 Required methods
 
@@ -344,6 +198,10 @@ message type slot (see L</Routing> above)
 
 =back
 
+You can do whatever you need in this method, but the synopsis gives a
+generally useful idea. You can find more examples of use at
+L<https://github.com/dakkar/CatalystX-StompSampleApps>
+
 The coderef returned will be invoked as a Catalyst action for each
 received message, which means it will get:
 
@@ -375,80 +233,37 @@ $c->stash->{message} >>, and the headers by calling C<<
 $c->res->header >> (yes, incoming and outgoing data are handled
 asymmetrically. Sorry.)
 
-=head1 Implementation Details
-
-B<HERE BE DRAGONS>.
-
-This role should be consumed by sub-classes of C<Catalyst::Component>.
-
-The consuming class is supposed to be used as a base class for
-application components (see the L</SYNOPSIS>, and make sure to tell
-Catalyst to load them!).
-
-Since these components won't be in the normal Model/View/Controller
-namespaces, we need to modify the C<COMPONENT> method to pick up the
-correct configuration options. This is were L</_kind_name> is used.
-
-We hijack the C<expand_modules> method to generate various bits of
-Catalyst code on the fly.
-
-If the component has a configuration entry C<enabled> with a false
-value, it is ignored, thus disabling it completely.
-
-We generate a controller package for each destination, by calling
-L</_generate_controller_package>, and we add an C<after> method
-modifier to its C<register_actions> method inherited from
-C<Catalyst::Controller>, to create the actions for each message
-type. The modifier is generated by calling
-L</_generate_register_action_modifier>.
-
-=head2 C<_generate_controller_package>
-
-  my $pkg = $self->_generate_controller_package(
-                $appname,$destination,
-                $config,$route);
-
-Generates a controller package, inheriting from whatever
-L</_controller_base_classes> returns, called
-C<${appname}::Controller::${destination_name}>. Any roles returned by
-L</_controller_roles> are applied to the controller.
-
-Inside the controller, we set the C<namespace> config slot to the
-destination name.
-
 =head2 C<_controller_base_classes>
 
 List (not arrayref!) of class names that the controllers generated by
-L</_generate_controller_package> should inherit from. Defaults to
+C<_generate_controller_package> should inherit from. Defaults to
 C<'Catalyst::Controller::JMS'>.
 
 =head2 C<_controller_roles>
 
 List (not arrayref!) of role names that should be applied to the
-controllers created by L</_generate_controller_package>. Defaults to
+controllers created by C<_generate_controller_package>. Defaults to
 the empty list.
 
-=head2 C<_generate_register_action_modifier>
+=head2 C<_action_extra_params>
 
-  my $modifier = $self->_generate_register_action_modifier(
-                   $appname,$destination,
-                   $controller_pkg,
-                   $config,$route);
+  my %extra_params = $self->_action_extra_params(
+                      $c,$destination,
+                      $message_type,$route->{$message_type},
+                     );
 
-Returns a coderef to be installed as an C<after> method modifier to
-the C<register_actions> method. The coderef will register each action
-with the Catalyst dispatcher. Each action will have the attribute
-C<MessageTarget>, see L<Catalyst::Controller::JMS>.
+You can override this method to provide additional arguments for the
+C<create_action> call inside
+C<_generate_register_action_modifier>. For example you could return:
 
-Each action's code is obtained by calling L</_wrap_code>.
+  attributes => { MySpecialAttr => [ 'foo' ] }
 
-=begin Pod::Coverage
+to set that attribute for all generated actions. Defaults to:
 
-routes
+  attributes => { 'MessageTarget' => [$message_type] }
 
-expand_modules
-
-=end Pod::Coverage
+to get L<Catalyst::Controller::JMS> to create an action to which that
+message type gets dispatched.
 
 =head1 AUTHOR
 

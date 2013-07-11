@@ -1,10 +1,10 @@
-package Test2::Foo::One;
+package Test1::Foo::Two;
 use Moose;
-extends 'Test2::Base::Foo';
+extends 'Test1::Base::Foo';
 
 sub routes {
     return {
-        base_url => {
+        base_url2 => {
             my_action => {
                 code => \&do_it,
             }

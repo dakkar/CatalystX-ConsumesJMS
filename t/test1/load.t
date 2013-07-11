@@ -9,14 +9,22 @@ my $components=Test1->components;
 cmp_deeply($components,
            {
                Test1 => ignore(),
-               'Test1::Controller::input_queue' => all(
-                   isa('Catalyst::Controller::JMS'),
+               'Test1::Controller::base_url' => all(
+                   isa('Catalyst::Controller'),
                    methods(
-                       action_namespace => 'input_queue',
-                       path_prefix => 'input_queue',
+                       action_namespace => 'base_url',
+                       path_prefix => 'base_url',
+                   ),
+               ),
+               'Test1::Controller::base_url2' => all(
+                   isa('Catalyst::Controller'),
+                   methods(
+                       action_namespace => 'base_url2',
+                       path_prefix => 'base_url2',
                    ),
                ),
                'Test1::Foo::One' => ignore(),
+               'Test1::Foo::Two' => ignore(),
            },
            'components loaded'
 );

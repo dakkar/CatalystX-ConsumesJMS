@@ -4,24 +4,24 @@ extends 'Test1::Base::Foo';
 
 sub routes {
     return {
-        input_queue => {
-            my_type => {
-                code => \&consume_it,
+        base_url => {
+            my_action => {
+                code => \&do_it,
             }
         },
     };
 }
 
-has messages => (
+has calls => (
     isa => 'ArrayRef',
     is => 'rw',
     default => sub { [ ] },
 );
 
-sub consume_it {
-    my ($self,$message,$headers) = @_;
+sub do_it {
+    my ($self,$body,$headers) = @_;
 
-    push @{$self->messages},[$headers,$message];
+    push @{$self->calls},[$headers,$body];
 
     return;
 }
