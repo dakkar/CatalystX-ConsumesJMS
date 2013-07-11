@@ -79,6 +79,8 @@ framework. If you don't need to hide Catalyst from your code, or you
 need non-trivial dispatching, you're probably better off without this
 module.
 
+=head2 Usage
+
 This role is to be used to define base classes for components in your
 Catalyst applications. It's I<not> to be consumed directly by
 application components. Classes inheriting from those base classes
