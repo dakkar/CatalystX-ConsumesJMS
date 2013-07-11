@@ -376,6 +376,10 @@ the L</_wrap_code> function (that the consuming class has to provide),
 and the coderef returned will be installed as the action to invoke for
 that name under that URL.
 
+=head1 AUTHOR
+
+Gianni Ceccarelli <gianni.ceccarelli@net-a-porter.com>
+
 =head1 Required methods
 
 =head2 C<_kind_name>
@@ -527,10 +531,6 @@ routes
 expand_modules
 
 =end Pod::Coverage
-
-=head1 AUTHOR
-
-Gianni Ceccarelli <gianni.ceccarelli@net-a-porter.com>
 
 =head1 COPYRIGHT AND LICENSE
 

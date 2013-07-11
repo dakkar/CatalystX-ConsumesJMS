@@ -163,6 +163,10 @@ to the L</_wrap_code> function (that the consuming class has to
 provide), and the coderef returned will be installed as the action to
 invoke when a message of that type is received from that destination.
 
+=head1 AUTHOR
+
+Gianni Ceccarelli <gianni.ceccarelli@net-a-porter.com>
+
 =head1 Required methods
 
 =head2 C<_kind_name>
@@ -264,10 +268,6 @@ to set that attribute for all generated actions. Defaults to:
 
 to get L<Catalyst::Controller::JMS> to create an action to which that
 message type gets dispatched.
-
-=head1 AUTHOR
-
-Gianni Ceccarelli <gianni.ceccarelli@net-a-porter.com>
 
 =head1 COPYRIGHT AND LICENSE
 
