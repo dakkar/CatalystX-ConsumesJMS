@@ -518,7 +518,7 @@ to set that attribute for all generated actions. Defaults to:
 to make all the action "local" to the generated controller (i.e. they
 will be invoked for requests to C<< $url/$action_name >>).
 
-=head1 AUTHORS
+=head1 AUTHOR
 
 Thanks to Peter Sergeant (SARGIE) for the name.
 
