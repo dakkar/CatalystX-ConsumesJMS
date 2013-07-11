@@ -376,10 +376,6 @@ the L</_wrap_code> function (that the consuming class has to provide),
 and the coderef returned will be installed as the action to invoke for
 that name under that URL.
 
-=head1 AUTHOR
-
-Gianni Ceccarelli <gianni.ceccarelli@net-a-porter.com>
-
 =head1 Required methods
 
 =head2 C<_kind_name>
@@ -522,8 +518,6 @@ to set that attribute for all generated actions. Defaults to:
 to make all the action "local" to the generated controller (i.e. they
 will be invoked for requests to C<< $url/$action_name >>).
 
-Thanks to Peter Sergeant (SARGIE) for the name.
-
 =begin Pod::Coverage
 
 routes
@@ -531,6 +525,14 @@ routes
 expand_modules
 
 =end Pod::Coverage
+
+=head1 AUTHOR
+
+Gianni Ceccarelli <gianni.ceccarelli@net-a-porter.com>
+
+=head1 CONTRIBUTORS
+
+Thanks to Peter Sergeant (SARGIE) for the name.
 
 =head1 COPYRIGHT AND LICENSE
 
