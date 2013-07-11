@@ -217,6 +217,9 @@ slot (see L</Routing> above)
 
 =back
 
+You can do whatever you need in this method, see the synopsis for an
+idea.
+
 The coderef returned will be invoked as a Catalyst action for each
 matching request, which means it will get:
 
@@ -231,9 +234,6 @@ the controller instance (you should rarely need this)
 the Catalyst application context
 
 =back
-
-You can do whatever you need in this method, see the synopsis for an
-idea.
 
 =cut
 
