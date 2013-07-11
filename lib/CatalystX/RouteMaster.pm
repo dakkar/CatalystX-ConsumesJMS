@@ -518,6 +518,8 @@ to set that attribute for all generated actions. Defaults to:
 to make all the action "local" to the generated controller (i.e. they
 will be invoked for requests to C<< $url/$action_name >>).
 
+=for more_authors Thanks to Peter Sergeant (SARGIE) for the name.
+
 =begin Pod::Coverage
 
 routes
@@ -529,10 +531,6 @@ expand_modules
 =head1 AUTHOR
 
 Gianni Ceccarelli <gianni.ceccarelli@net-a-porter.com>
-
-=head1 AUTHOR
-
-Thanks to Peter Sergeant (SARGIE) for the name.
 
 =head1 COPYRIGHT AND LICENSE
 

@@ -1,4 +1,4 @@
-1.05      2013-07-11 12:35:38 Europe/London
+1.05      2013-07-11 12:41:45 Europe/London
 - extracted CatalystX::RouteMaster
 - extended route mapping flexibility, you can now map actions /
   message types in addition to URLs / destinations
