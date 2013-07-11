@@ -510,7 +510,7 @@ sub _action_extra_params {
     return ( attributes => { 'Path' => ["$url/$action_name"] } );
 }
 
-=head1 AUTHORS
+=head1 CONTRIBUTORS
 
 Thanks to Peter Sergeant (SARGIE) for the name.
 
