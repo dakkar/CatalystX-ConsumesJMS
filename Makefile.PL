@@ -23,6 +23,7 @@ my %WriteMakefileArgs = (
     "Catalyst::Controller::JMS" => 0,
     "Catalyst::Utils" => 0,
     "Class::Load" => 0,
+    "Moose" => "2.0801",
     "Moose::Role" => 0,
     "Moose::Util" => 0,
     "namespace::autoclean" => 0
@@ -48,7 +49,7 @@ my %WriteMakefileArgs = (
     "strict" => 0,
     "warnings" => 0
   },
-  "VERSION" => "1.05",
+  "VERSION" => "1.06",
   "test" => {
     "TESTS" => "t/*.t t/test1/*.t t/test2/*.t t/test3/*.t t/test4/*.t"
   }

@@ -36,6 +36,7 @@
             "Catalyst::Controller::JMS" : "0",
             "Catalyst::Utils" : "0",
             "Class::Load" : "0",
+            "Moose" : "2.0801",
             "Moose::Role" : "0",
             "Moose::Util" : "0",
             "namespace::autoclean" : "0"
@@ -66,6 +67,6 @@
       }
    },
    "release_status" : "stable",
-   "version" : "1.05"
+   "version" : "1.06"
 }
 

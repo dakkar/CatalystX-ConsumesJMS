@@ -1,3 +1,6 @@
+1.06      2013-07-25 15:35:13 Europe/London
+- bumped Moose dependency to fix spurious test failures
+
 1.05      2013-07-11 15:08:30 Europe/London
 - extracted CatalystX::RouteMaster
 - extended route mapping flexibility, you can now map actions /
