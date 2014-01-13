@@ -1,7 +1,7 @@
 package CatalystX::RouteMaster;
 use Moose::Role;
 use namespace::autoclean;
-use Class::Load ();
+use Module::Runtime 'require_module';
 use Catalyst::Utils ();
 use Moose::Util qw(apply_all_roles);
 
@@ -402,7 +402,7 @@ sub _generate_controller_package {
 
         my @superclasses = $self->_controller_base_classes;
         my @roles = $self->_controller_roles;
-        Class::Load::load_class($_) for @superclasses,@roles;
+        require_module($_) for @superclasses,@roles;
 
         my $meta = Moose::Meta::Class->create(
             $controller_pkg => (
