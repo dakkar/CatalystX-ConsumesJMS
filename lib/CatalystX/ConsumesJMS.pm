@@ -1,6 +1,6 @@
 package CatalystX::ConsumesJMS;
 {
-  $CatalystX::ConsumesJMS::VERSION = '1.06';
+  $CatalystX::ConsumesJMS::VERSION = '1.07';
 }
 {
   $CatalystX::ConsumesJMS::DIST = 'CatalystX-ConsumesJMS';
@@ -28,7 +28,7 @@ __END__
 
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -36,7 +36,7 @@ CatalystX::ConsumesJMS - role for components providing Catalyst actions consumin
 
 =head1 VERSION
 
-version 1.06
+version 1.07
 
 =head1 SYNOPSIS
 

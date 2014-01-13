@@ -1,13 +1,13 @@
 package CatalystX::RouteMaster;
 {
-  $CatalystX::RouteMaster::VERSION = '1.06';
+  $CatalystX::RouteMaster::VERSION = '1.07';
 }
 {
   $CatalystX::RouteMaster::DIST = 'CatalystX-ConsumesJMS';
 }
 use Moose::Role;
 use namespace::autoclean;
-use Class::Load ();
+use Module::Runtime 'require_module';
 use Catalyst::Utils ();
 use Moose::Util qw(apply_all_roles);
 
@@ -150,7 +150,7 @@ sub _generate_controller_package {
 
         my @superclasses = $self->_controller_base_classes;
         my @roles = $self->_controller_roles;
-        Class::Load::load_class($_) for @superclasses,@roles;
+        require_module($_) for @superclasses,@roles;
 
         my $meta = Moose::Meta::Class->create(
             $controller_pkg => (
@@ -214,7 +214,7 @@ __END__
 
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
@@ -222,7 +222,7 @@ CatalystX::RouteMaster - role for components providing Catalyst actions
 
 =head1 VERSION
 
-version 1.06
+version 1.07
 
 =head1 SYNOPSIS
 
