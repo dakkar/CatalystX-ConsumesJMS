@@ -1,4 +1,6 @@
 {{$NEXT}}
+
+1.07      2014-01-13 14:58:11 Europe/London
  - replace deprecated Class::Load with Module::Runtime
 
 1.06      2013-07-25 15:54:23 Europe/London
