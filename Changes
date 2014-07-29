@@ -1,4 +1,5 @@
 {{$NEXT}}
+ - use SingleEncoding (thanks sergeyromanov)
 
 1.07      2014-01-13 14:58:11 Europe/London
  - replace deprecated Class::Load with Module::Runtime
